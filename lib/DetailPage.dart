@@ -45,7 +45,7 @@ class _DetailPageState extends State<DetailPage> {
       setState(() => _isAuthenticating = true);
 
       bool authenticated = await auth.authenticate(
-        localizedReason: 'Let OS determine authentication method',
+        localizedReason: 'Login to reveal the password',
         options: const AuthenticationOptions(
           useErrorDialogs: true,
           stickyAuth: true,
