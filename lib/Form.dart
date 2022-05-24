@@ -39,7 +39,7 @@ class _FormPageState extends State<FormPage> {
           AccountEntry(siteContr.text, usernameContr.text, passwordContr.text);
       await SecureStorage.createEntry(data);
 
-      navigateTo(context, const HomePage());
+      navigateTo(context, const HomePage(), clear: true);
     }
   }
 
