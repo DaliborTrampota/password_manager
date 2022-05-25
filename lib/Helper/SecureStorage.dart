@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:password_manager/Types.dart';
+import './Types.dart';
 
 class SecureStorage {
   static const _storage = FlutterSecureStorage();
@@ -35,5 +35,10 @@ class SecureStorage {
 
   static Future removeSite(String name) async {
     _storage.delete(key: name, aOptions: aOptions, iOptions: iOptions);
+  }
+
+  static Future editSite(String name, AccountEntry newData) async {
+    SecureStorage.removeSite(name);
+    SecureStorage.createEntry(newData);
   }
 }

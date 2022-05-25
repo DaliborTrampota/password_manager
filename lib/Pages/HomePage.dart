@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:password_manager/SecureStorage.dart';
 
 import 'DetailPage.dart';
-import 'Form.dart';
-import 'Types.dart';
-import 'Utils.dart';
+import 'CreateForm.dart';
+import 'EditForm.dart';
+
+import 'package:password_manager/Helper/Types.dart';
+import 'package:password_manager/Helper/Utils.dart';
+import 'package:password_manager/Helper/SecureStorage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -44,7 +46,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Widget render(AccountEntry data) {
+  Widget renderTile(AccountEntry data) {
     return ListTile(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10))),
@@ -54,10 +56,22 @@ class _HomePageState extends State<HomePage> {
         onTap: () => navigateTo(context, DetailPage(data: data)),
         subtitle: Text(data.username,
             style: const TextStyle(fontSize: 18, color: Colors.white)),
-        trailing: IconButton(
-          icon: const Icon(Icons.delete, color: Colors.white),
-          onPressed: () => removeSite(data.siteName),
-        ));
+        trailing: Wrap(children: [
+          IconButton(
+            splashRadius: 16,
+            constraints: const BoxConstraints(),
+            padding: const EdgeInsets.all(4),
+            icon: const Icon(Icons.delete, color: Colors.white),
+            onPressed: () => removeSite(data.siteName),
+          ),
+          IconButton(
+            splashRadius: 16,
+            constraints: const BoxConstraints(),
+            padding: const EdgeInsets.all(4),
+            icon: const Icon(Icons.edit, color: Colors.white),
+            onPressed: () => navigateTo(context, EditForm(data: data)),
+          ),
+        ]));
   }
 
   @override
@@ -72,12 +86,12 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8.0),
           itemCount: accounts.length,
           itemBuilder: (context, i) {
-            return render(accounts[i]);
+            return renderTile(accounts[i]);
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => navigateTo(context, const FormPage()),
+        onPressed: () => navigateTo(context, const CreateForm()),
         child: const Icon(Icons.add),
       ),
     );

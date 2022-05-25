@@ -1,45 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:password_manager/HomePage.dart';
-import 'package:password_manager/SecureStorage.dart';
-import 'package:password_manager/Types.dart';
-import 'package:password_manager/Utils.dart';
+import 'package:password_manager/Pages/HomePage.dart';
+
+import 'package:password_manager/Helper/Types.dart';
+import 'package:password_manager/Helper/Utils.dart';
+import 'package:password_manager/Helper/SecureStorage.dart';
 
 PasswordRequirements pr = PasswordRequirements(8, true, true, true);
 
-class FormPage extends StatefulWidget {
-  const FormPage({Key? key}) : super(key: key);
+class EditForm extends StatefulWidget {
+  const EditForm({Key? key, required this.data}) : super(key: key);
 
+  final AccountEntry data;
   final title = "New Account";
 
   @override
-  _FormPageState createState() => _FormPageState();
+  _EditFormState createState() => _EditFormState();
 }
 
-final _formKey = GlobalKey<FormState>();
-TextEditingController siteContr = TextEditingController();
-TextEditingController usernameContr = TextEditingController();
-TextEditingController passwordContr = TextEditingController();
+class _EditFormState extends State<EditForm> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController siteContr = TextEditingController();
+  TextEditingController usernameContr = TextEditingController();
+  TextEditingController passwordContr = TextEditingController();
 
-class _FormPageState extends State<FormPage> {
   void validate(context) async {
     if (_formKey.currentState!.validate()) {
-      bool siteExists = await SecureStorage.siteExists(siteContr.text);
-      if (siteExists) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("You already have a site with that name saved!"),
-        ));
-        return;
-      }
       AccountEntry data =
           AccountEntry(siteContr.text, usernameContr.text, passwordContr.text);
-      await SecureStorage.createEntry(data);
-
+      await SecureStorage.editSite(widget.data.siteName, data);
+      _formKey.currentState?.reset();
       navigateTo(context, const HomePage(), clear: true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    siteContr.text = widget.data.siteName;
+    usernameContr.text = widget.data.username;
+    passwordContr.text = widget.data.password;
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Form(
