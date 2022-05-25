@@ -23,3 +23,15 @@ class AccountEntry {
   static AccountEntry deserialize(String json) =>
       AccountEntry.fromJson(jsonDecode(json));
 }
+
+class PasswordRequirements {
+  final int minLength;
+  final bool requireNumber;
+  final bool requireSpecialChar;
+  final bool requireUpperCase;
+
+  static String specialChars = r"[.,!?:*/\\]";
+
+  PasswordRequirements(this.minLength, this.requireNumber,
+      this.requireSpecialChar, this.requireUpperCase);
+}

@@ -4,12 +4,7 @@ import 'package:password_manager/SecureStorage.dart';
 import 'package:password_manager/Types.dart';
 import 'package:password_manager/Utils.dart';
 
-Map<String, dynamic> passwordRequirements = {
-  "minLength": 8,
-  "requireNumber": true,
-  "requireSpecialChar": true,
-  "requireUpperCase": true
-};
+PasswordRequirements pr = PasswordRequirements(8, true, true, true);
 
 class FormPage extends StatefulWidget {
   const FormPage({Key? key}) : super(key: key);
@@ -94,19 +89,20 @@ class _FormPageState extends State<FormPage> {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a password';
                   }
-                  if (value.length < passwordRequirements['minLength']) {
-                    return 'Password is too short. Password should be at least ${passwordRequirements['minLength']} long.';
+                  if (value.length < pr.minLength) {
+                    return 'Password is too short. Password should be at least ${pr.minLength} long.';
                   }
-                  if (!value.contains(RegExp(r"\d")) &&
-                      passwordRequirements['requireNumber']) {
+                  if (pr.requireNumber && !value.contains(RegExp(r"\d"))) {
                     return 'Password has to include at least one number.';
                   }
-                  if (!value.contains(RegExp(r"[.,!?:*/\\]")) &&
-                      passwordRequirements['requireSpecialChar']) {
-                    return 'Password has to include at least one special character. Special characters are: .,!?:*/\\';
+
+                  if (pr.requireSpecialChar &&
+                      !value.contains(
+                          RegExp(PasswordRequirements.specialChars))) {
+                    return 'Password has to include at least one special character: ${PasswordRequirements.specialChars}';
                   }
-                  if (!value.contains(RegExp(r"[A-Z]")) &&
-                      passwordRequirements['requireUpperCase']) {
+                  if (pr.requireUpperCase &&
+                      !value.contains(RegExp(r"[A-Z]"))) {
                     return 'Password has to include at least one uppercase letter.';
                   }
 
