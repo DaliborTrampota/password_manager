@@ -56,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData t = Theme.of(context);
     return Scaffold(
       body: Form(
           key: _formKey,
@@ -63,11 +64,11 @@ class _LoginPageState extends State<LoginPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(isMasterPasswordSet == true ? 'Unlock' : 'Create password',
-                  style: const TextStyle(fontSize: 32)),
+                  style: t.textTheme.titleLarge),
               TextFormField(
                 controller: passContr,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 32),
+                style: t.textTheme.titleLarge,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     if (isMasterPasswordSet == true) {

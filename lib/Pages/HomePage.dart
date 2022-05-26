@@ -56,30 +56,35 @@ class _HomePageState extends State<HomePage> {
     navigateTo(context, EditForm(data: AccountEntry.clone(data)));
   }
 
-  Widget renderTile(AccountEntry data) {
+  Widget renderTile(AccountEntry data, BuildContext context) {
+    final ThemeData t = Theme.of(context);
     return ListTile(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(10))),
-        tileColor: Colors.blue,
+        tileColor: t.colorScheme.primary,
         title: Text(data.siteName,
-            style: const TextStyle(fontSize: 24, color: Colors.white)),
+            style: t.brightness == Brightness.light
+                ? t.textTheme.titleMedium!.copyWith(color: Colors.grey.shade300)
+                : t.textTheme.titleMedium),
         onTap: () =>
             navigateTo(context, DetailPage(data: AccountEntry.clone(data))),
         subtitle: Text(data.username,
-            style: const TextStyle(fontSize: 18, color: Colors.white)),
+            style: t.brightness == Brightness.light
+                ? t.textTheme.titleSmall!.copyWith(color: Colors.grey.shade300)
+                : t.textTheme.titleSmall),
         trailing: Wrap(children: [
           IconButton(
             splashRadius: 16,
             constraints: const BoxConstraints(),
             padding: const EdgeInsets.all(4),
-            icon: const Icon(Icons.delete, color: Colors.white),
+            icon: Icon(Icons.delete, color: t.colorScheme.onPrimary),
             onPressed: () => removeSite(data.siteName, context),
           ),
           IconButton(
             splashRadius: 16,
             constraints: const BoxConstraints(),
             padding: const EdgeInsets.all(4),
-            icon: const Icon(Icons.edit, color: Colors.white),
+            icon: Icon(Icons.edit, color: t.colorScheme.onPrimary),
             onPressed: () => editSite(data, context),
           ),
         ]));
@@ -97,7 +102,7 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8.0),
           itemCount: accounts.length,
           itemBuilder: (context, i) {
-            return renderTile(accounts[i]);
+            return renderTile(accounts[i], context);
           },
         ),
       ),

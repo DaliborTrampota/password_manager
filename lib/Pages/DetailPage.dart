@@ -78,10 +78,9 @@ class _DetailPageState extends State<DetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    TextStyle fieldStyle = const TextStyle(fontSize: 28, color: Colors.white);
-    TextStyle titleStyle = const TextStyle(fontSize: 32, color: Colors.white);
+    final ThemeData t = Theme.of(context);
 
-    var copyIcon = const Icon(Icons.copy, color: Colors.white);
+    var copyIcon = Icon(Icons.copy, color: t.colorScheme.onPrimary);
 
     return Scaffold(
       appBar: AppBar(title: Text(widget.data.siteName)),
@@ -93,7 +92,8 @@ class _DetailPageState extends State<DetailPage> {
                 const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 5),
             height: 100,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: Colors.blue),
+                borderRadius: BorderRadius.circular(10),
+                color: t.colorScheme.primary),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -102,11 +102,19 @@ class _DetailPageState extends State<DetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text("Username", style: titleStyle)),
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text("Username",
+                            style: t.brightness == Brightness.light
+                                ? t.textTheme.titleLarge!
+                                    .copyWith(color: Colors.grey.shade300)
+                                : t.textTheme.titleLarge)),
                     Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(widget.data.username, style: fieldStyle)),
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text(widget.data.username,
+                            style: t.brightness == Brightness.light
+                                ? t.textTheme.titleMedium!
+                                    .copyWith(color: Colors.grey.shade300)
+                                : t.textTheme.titleMedium)),
                   ],
                 ),
                 IconButton(
@@ -119,7 +127,8 @@ class _DetailPageState extends State<DetailPage> {
             margin: const EdgeInsets.symmetric(horizontal: 10),
             height: 100,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10), color: Colors.blue),
+                borderRadius: BorderRadius.circular(10),
+                color: t.colorScheme.primary),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -128,11 +137,19 @@ class _DetailPageState extends State<DetailPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text("Password", style: titleStyle)),
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text("Password",
+                            style: t.brightness == Brightness.light
+                                ? t.textTheme.titleLarge!
+                                    .copyWith(color: Colors.grey.shade300)
+                                : t.textTheme.titleLarge)),
                     Padding(
-                        padding: EdgeInsets.only(left: 10),
-                        child: Text(passwordText, style: fieldStyle)),
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text(passwordText,
+                            style: t.brightness == Brightness.light
+                                ? t.textTheme.titleMedium!
+                                    .copyWith(color: Colors.grey.shade300)
+                                : t.textTheme.titleMedium)),
                   ],
                 ),
                 IconButton(

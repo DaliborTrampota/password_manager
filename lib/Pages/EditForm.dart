@@ -12,7 +12,7 @@ class EditForm extends StatefulWidget {
   const EditForm({Key? key, required this.data}) : super(key: key);
 
   final AccountEntry data;
-  final title = "New Account";
+  final title = "Edit Account";
 
   @override
   _EditFormState createState() => _EditFormState();
@@ -59,6 +59,8 @@ class _EditFormState extends State<EditForm> {
 
   @override
   Widget build(BuildContext context) {
+    final ThemeData t = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: Form(
@@ -67,12 +69,11 @@ class _EditFormState extends State<EditForm> {
             children: [
               TextFormField(
                 controller: siteContr,
-                decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
+                decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(10),
                     labelText: 'Site name or URL',
                     hintText: 'Google',
-                    labelStyle:
-                        TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                    labelStyle: t.textTheme.labelMedium),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a site name or URL';
@@ -82,12 +83,11 @@ class _EditFormState extends State<EditForm> {
               ),
               TextFormField(
                 controller: usernameContr,
-                decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
+                decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(10),
                     labelText: 'Username',
                     hintText: 'Dalibor',
-                    labelStyle:
-                        TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                    labelStyle: t.textTheme.labelMedium),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
@@ -97,12 +97,11 @@ class _EditFormState extends State<EditForm> {
               ),
               TextFormField(
                 controller: passwordContr,
-                decoration: const InputDecoration(
-                    contentPadding: EdgeInsets.all(10),
+                decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.all(10),
                     labelText: 'Password',
                     hintText: '******',
-                    labelStyle:
-                        TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                    labelStyle: t.textTheme.labelMedium),
                 obscureText: true,
                 validator: (value) {
                   return validatePassword(value, pr);
