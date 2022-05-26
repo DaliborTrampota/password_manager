@@ -7,7 +7,23 @@ class SecureStorage {
   static const aOptions = AndroidOptions(encryptedSharedPreferences: true);
   static const iOptions = IOSOptions();
 
-  static Future createEntry(AccountEntry data) async {
+  static Future<String> getMasterPass() async {
+    return await _storage.read(
+            key: 'master', iOptions: iOptions, aOptions: aOptions) ??
+        '';
+  }
+
+  static Future<bool> hasMasterPass() async {
+    return await _storage.containsKey(
+        key: 'master', iOptions: iOptions, aOptions: aOptions);
+  }
+
+  static setMasterPass(password) async {
+    await _storage.write(
+        key: 'master', value: password, iOptions: iOptions, aOptions: aOptions);
+  }
+
+  /*static Future createEntry(AccountEntry data) async {
     await _storage.write(
         key: data.siteName,
         value: AccountEntry.serialize(data),
@@ -40,5 +56,5 @@ class SecureStorage {
   static Future editSite(String name, AccountEntry newData) async {
     SecureStorage.removeSite(name);
     SecureStorage.createEntry(newData);
-  }
+  }*/
 }

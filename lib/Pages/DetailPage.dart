@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:local_auth/local_auth.dart';
 
+import 'package:password_manager/Helper/SecureStorage.dart';
 import 'package:password_manager/Helper/Types.dart';
+import 'package:password_manager/Helper/Utils.dart';
 
 class DetailPage extends StatefulWidget {
   final AccountEntry data;
@@ -17,68 +18,38 @@ class _DetailPageState extends State<DetailPage> {
   String passwordText = "*****";
   bool isVisible = false;
   bool isAuthenticated = false;
-  List<BiometricType>? _availableBiometrics;
-  bool? _canCheckBiometrics;
   bool _isAuthenticating = false;
 
-  final LocalAuthentication auth = LocalAuthentication();
+  Future<void> _authenticate() async {
+    setState(() => _isAuthenticating = true);
 
-  @override
-  void initState() {
-    super.initState();
-
-    init();
-  }
-
-  Future<void> init() async {
-    List<BiometricType>? biometrics = await auth.getAvailableBiometrics();
-    bool canCheck = await auth.canCheckBiometrics;
+    bool authenticated = await authenticate();
 
     setState(() {
-      _availableBiometrics = biometrics;
-      _canCheckBiometrics = canCheck;
+      isAuthenticated = authenticated;
+      _isAuthenticating = false;
     });
-  }
-
-  Future<void> authenticate() async {
-    try {
-      setState(() => _isAuthenticating = true);
-
-      bool authenticated = await auth.authenticate(
-        localizedReason: 'Login to reveal the password',
-        options: const AuthenticationOptions(
-          useErrorDialogs: true,
-          stickyAuth: true,
-        ),
-      );
-      setState(() {
-        isAuthenticated = authenticated;
-        _isAuthenticating = false;
-      });
-    } on PlatformException catch (e) {
-      if (e.code == 'NotAvailable') {
-        //no pin nor biometrics set?
-        setState(() => {isAuthenticated = true, _isAuthenticating = false});
-        return;
-      }
-      print(e);
-      setState(() => _isAuthenticating = false);
-      return;
-    }
-  }
-
-  Future<void> _cancelAuthentication() async {
-    await auth.stopAuthentication();
-    setState(() => _isAuthenticating = false);
   }
 
   void togglePassword(context) async {
     if (!isAuthenticated) {
-      await authenticate();
+      await _authenticate();
 
       if (!isAuthenticated) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("Not authenticated"),
+        ));
+        return;
+      }
+
+      String masterPassword = await SecureStorage.getMasterPass();
+      try {
+        widget.data.password =
+            decryptPass(masterPassword, widget.data.password);
+      } catch (err) {
+        print(err);
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Wrong master password!"),
         ));
         return;
       }
@@ -91,10 +62,18 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   void copy(text, context) {
-    Clipboard.setData(ClipboardData(text: text));
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text("Copied into clipboard"),
-    ));
+    if (isAuthenticated) {
+      Clipboard.setData(ClipboardData(text: text));
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Copied into clipboard"),
+      ));
+    } else {
+      Clipboard.setData(ClipboardData(text: text));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Authenticate first by pressing the eye button"),
+      ));
+    }
   }
 
   @override

@@ -6,7 +6,7 @@ import 'EditForm.dart';
 
 import 'package:password_manager/Helper/Types.dart';
 import 'package:password_manager/Helper/Utils.dart';
-import 'package:password_manager/Helper/SecureStorage.dart';
+import 'package:password_manager/Helper/Storage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,10 +19,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<AccountEntry> accounts = [];
-  /*<Object>[];[
-    AccountEntry('Google', 'dalibor', '12345'),
-    AccountEntry('Gmail', 'pepa', '54321')
-  ];*/
 
   @override
   void initState() {
@@ -32,18 +28,32 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future init() async {
-    final accounts = await SecureStorage.getAccounts();
+    await Storage.create();
+    final accounts = Storage.getAccounts();
 
     setState(() {
       this.accounts = accounts;
     });
   }
 
-  void removeSite(siteName) {
-    SecureStorage.removeSite(siteName);
+  void removeSite(siteName, context) {
+    Storage.removeSite(siteName);
     setState(() {
       accounts = accounts.where((a) => a.siteName != siteName).toList();
     });
+  }
+
+  void editSite(AccountEntry data, context) async {
+    bool authenticated = await authenticate();
+
+    if (!authenticated) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Not authenticated"),
+      ));
+      return;
+    }
+
+    navigateTo(context, EditForm(data: AccountEntry.clone(data)));
   }
 
   Widget renderTile(AccountEntry data) {
@@ -53,7 +63,8 @@ class _HomePageState extends State<HomePage> {
         tileColor: Colors.blue,
         title: Text(data.siteName,
             style: const TextStyle(fontSize: 24, color: Colors.white)),
-        onTap: () => navigateTo(context, DetailPage(data: data)),
+        onTap: () =>
+            navigateTo(context, DetailPage(data: AccountEntry.clone(data))),
         subtitle: Text(data.username,
             style: const TextStyle(fontSize: 18, color: Colors.white)),
         trailing: Wrap(children: [
@@ -62,14 +73,14 @@ class _HomePageState extends State<HomePage> {
             constraints: const BoxConstraints(),
             padding: const EdgeInsets.all(4),
             icon: const Icon(Icons.delete, color: Colors.white),
-            onPressed: () => removeSite(data.siteName),
+            onPressed: () => removeSite(data.siteName, context),
           ),
           IconButton(
             splashRadius: 16,
             constraints: const BoxConstraints(),
             padding: const EdgeInsets.all(4),
             icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () => navigateTo(context, EditForm(data: data)),
+            onPressed: () => editSite(data, context),
           ),
         ]));
   }

@@ -4,6 +4,7 @@ import 'package:password_manager/Pages/HomePage.dart';
 import 'package:password_manager/Helper/Types.dart';
 import 'package:password_manager/Helper/Utils.dart';
 import 'package:password_manager/Helper/SecureStorage.dart';
+import 'package:password_manager/Helper/Storage.dart';
 
 PasswordRequirements pr = PasswordRequirements(8, true, true, true);
 
@@ -24,7 +25,7 @@ TextEditingController passwordContr = TextEditingController();
 class _CreateFormState extends State<CreateForm> {
   void validate(context) async {
     if (_formKey.currentState!.validate()) {
-      bool siteExists = await SecureStorage.siteExists(siteContr.text);
+      bool siteExists = Storage.siteExists(siteContr.text);
       if (siteExists) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text("You already have a site with that name saved!"),
@@ -33,7 +34,11 @@ class _CreateFormState extends State<CreateForm> {
       }
       AccountEntry data =
           AccountEntry(siteContr.text, usernameContr.text, passwordContr.text);
-      await SecureStorage.createEntry(data);
+
+      String masterPassword = await SecureStorage.getMasterPass();
+      data.password = encryptPass(masterPassword, data.password);
+      Storage.createEntry(data);
+
       _formKey.currentState?.reset();
       navigateTo(context, const HomePage(), clear: true);
     }
@@ -87,27 +92,7 @@ class _CreateFormState extends State<CreateForm> {
                         TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
                 obscureText: true,
                 validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a password';
-                  }
-                  if (value.length < pr.minLength) {
-                    return 'Password is too short. Password should be at least ${pr.minLength} long.';
-                  }
-                  if (pr.requireNumber && !value.contains(RegExp(r"\d"))) {
-                    return 'Password has to include at least one number.';
-                  }
-
-                  if (pr.requireSpecialChar &&
-                      !value.contains(
-                          RegExp(PasswordRequirements.specialChars))) {
-                    return 'Password has to include at least one special character: ${PasswordRequirements.specialChars}';
-                  }
-                  if (pr.requireUpperCase &&
-                      !value.contains(RegExp(r"[A-Z]"))) {
-                    return 'Password has to include at least one uppercase letter.';
-                  }
-
-                  return null;
+                  return validatePassword(value, pr);
                 },
               ),
             ],
