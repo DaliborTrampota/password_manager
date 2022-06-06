@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
 
 @HiveType(typeId: 0)
@@ -13,25 +14,13 @@ class AccountEntry {
   AccountEntry(this.siteName, this.username, this.password);
 
   factory AccountEntry.fromJson(Map<String, dynamic> jsonData) {
-    return AccountEntry(
-        jsonData['siteName'], jsonData['username'], jsonData['password']);
+    return AccountEntry(jsonData['siteName'], jsonData['username'], jsonData['password']);
   }
 
-  factory AccountEntry.clone(AccountEntry data) {
-    return AccountEntry(data.siteName, data.username, data.password);
-  }
+  static Map<String, dynamic> toMap(AccountEntry data) => {'siteName': data.siteName, 'username': data.username, 'password': data.password};
 
-  static Map<String, dynamic> toMap(AccountEntry data) => {
-        'siteName': data.siteName,
-        'username': data.username,
-        'password': data.password
-      };
-
-  static String serialize(AccountEntry data) =>
-      json.encode(AccountEntry.toMap(data));
-
-  static AccountEntry deserialize(String json) =>
-      AccountEntry.fromJson(jsonDecode(json));
+  static String serialize(AccountEntry data) => json.encode(AccountEntry.toMap(data));
+  static AccountEntry deserialize(String json) => AccountEntry.fromJson(jsonDecode(json));
 }
 
 class PasswordRequirements {
@@ -42,10 +31,13 @@ class PasswordRequirements {
 
   static String specialChars = r"[.,!?:*/\\]";
 
-  PasswordRequirements(this.minLength, this.requireNumber,
-      this.requireSpecialChar, this.requireUpperCase);
+  PasswordRequirements(this.minLength, this.requireNumber, this.requireSpecialChar, this.requireUpperCase);
 }
 
+typedef AccountEntryActionFunction = void Function(AccountEntry, BuildContext);
+typedef ValidateFunction = String? Function(String?);
+
+enum FormMode { create, edit }
 /*class AccountEntryAdapter extends TypeAdapter<AccountEntry> {
   @override
   final typeId = 0;
@@ -97,8 +89,5 @@ class AccountEntryAdapter extends TypeAdapter<AccountEntry> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AccountEntryAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is AccountEntryAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:math';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
@@ -6,8 +7,7 @@ import 'package:password_manager/Helper/Types.dart';
 
 void navigateTo(context, StatefulWidget page, {clear = false}) {
   if (clear) {
-    Navigator.pushAndRemoveUntil(
-        context, MaterialPageRoute(builder: (context) => page), (r) => false);
+    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => page), (r) => false);
   } else {
     Navigator.push(context, MaterialPageRoute(builder: (context) => page));
   }
@@ -30,16 +30,16 @@ String encryptPass(String masterPassword, String pass) {
   return e.base64.toString();
 }
 
-String decryptPass(String masterPassword, String pass) {
-  if (masterPassword.length < 32) {
-    int count = 32 - masterPassword.length;
+String decryptPass(String encryptPassword, String pass) {
+  if (encryptPassword.length < 32) {
+    int count = 32 - encryptPassword.length;
     for (var i = 0; i < count; i++) {
-      masterPassword += ".";
+      encryptPassword += ".";
     }
   }
 
   final iv = encrypt.IV.fromLength(16);
-  final key = encrypt.Key.fromUtf8(masterPassword);
+  final key = encrypt.Key.fromUtf8(encryptPassword);
 
   try {
     final encrypter = encrypt.Encrypter(encrypt.AES(key));
@@ -97,12 +97,28 @@ String? validatePassword(String? password, PasswordRequirements pr) {
   if (pr.requireNumber && !password.contains(RegExp(r"\d"))) {
     return 'Password has to include at least one number.';
   }
-  if (pr.requireSpecialChar &&
-      !password.contains(RegExp(PasswordRequirements.specialChars))) {
+  if (pr.requireSpecialChar && !password.contains(RegExp(PasswordRequirements.specialChars))) {
     return 'Password has to include at least one special character: ${PasswordRequirements.specialChars}';
   }
   if (pr.requireUpperCase && !password.contains(RegExp(r"[A-Z]"))) {
     return 'Password has to include at least one uppercase letter.';
   }
   return null;
+}
+
+String generatePassword(int length, {bool letter = true, bool isNumber = true, bool isSpecial = true}) {
+  const letterLowerCase = "abcdefghijklmnopqrstuvwxyz";
+  const letterUpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const number = '0123456789';
+  const special = '@#%^*>\$@?/[]=+';
+
+  String chars = "";
+  if (letter) chars += '$letterLowerCase$letterUpperCase';
+  if (isNumber) chars += number;
+  if (isSpecial) chars += special;
+
+  return List.generate(length, (index) {
+    final indexRandom = Random.secure().nextInt(chars.length);
+    return chars[indexRandom];
+  }).join('');
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:password_manager/Components/Bubble.dart';
 
 import 'package:password_manager/Helper/SecureStorage.dart';
 import 'package:password_manager/Helper/Types.dart';
@@ -16,6 +17,7 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   String passwordText = "*****";
+  String decodedPassword = "";
   bool isVisible = false;
   bool isAuthenticated = false;
   bool _isAuthenticating = false;
@@ -42,10 +44,9 @@ class _DetailPageState extends State<DetailPage> {
         return;
       }
 
-      String masterPassword = await SecureStorage.getMasterPass();
+      String encryptPass = await SecureStorage.getEncryptPass();
       try {
-        widget.data.password =
-            decryptPass(masterPassword, widget.data.password);
+        decodedPassword = decryptPass(encryptPass, widget.data.password);
       } catch (err) {
         print(err);
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -57,7 +58,7 @@ class _DetailPageState extends State<DetailPage> {
 
     setState(() {
       isVisible = !isVisible;
-      passwordText = isVisible ? widget.data.password : '*****';
+      passwordText = isVisible ? decodedPassword : '*****';
     });
   }
 
@@ -69,7 +70,6 @@ class _DetailPageState extends State<DetailPage> {
         content: Text("Copied into clipboard"),
       ));
     } else {
-      Clipboard.setData(ClipboardData(text: text));
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Authenticate first by pressing the eye button"),
       ));
@@ -88,12 +88,9 @@ class _DetailPageState extends State<DetailPage> {
         child: Column(children: [
           //Text(widget.data.siteName, style: fieldStyle),
           Container(
-            margin:
-                const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 5),
+            margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 5),
             height: 100,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: t.colorScheme.primary),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: t.colorScheme.primary),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -101,60 +98,27 @@ class _DetailPageState extends State<DetailPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text("Username",
-                            style: t.brightness == Brightness.light
-                                ? t.textTheme.titleLarge!
-                                    .copyWith(color: Colors.grey.shade300)
-                                : t.textTheme.titleLarge)),
-                    Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(widget.data.username,
-                            style: t.brightness == Brightness.light
-                                ? t.textTheme.titleMedium!
-                                    .copyWith(color: Colors.grey.shade300)
-                                : t.textTheme.titleMedium)),
+                    Bubble(title: 'Username', style: t.textTheme.titleLarge),
+                    Bubble(title: widget.data.username, style: t.textTheme.titleMedium),
                   ],
                 ),
-                IconButton(
-                    onPressed: () => copy(widget.data.username, context),
-                    icon: copyIcon)
+                IconButton(onPressed: () => copy(widget.data.username, context), icon: copyIcon)
               ],
             ),
           ),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
             height: 100,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: t.colorScheme.primary),
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: t.colorScheme.primary),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text("Password",
-                            style: t.brightness == Brightness.light
-                                ? t.textTheme.titleLarge!
-                                    .copyWith(color: Colors.grey.shade300)
-                                : t.textTheme.titleLarge)),
-                    Padding(
-                        padding: const EdgeInsets.only(left: 10),
-                        child: Text(passwordText,
-                            style: t.brightness == Brightness.light
-                                ? t.textTheme.titleMedium!
-                                    .copyWith(color: Colors.grey.shade300)
-                                : t.textTheme.titleMedium)),
-                  ],
+                  children: [Bubble(title: 'Password', style: t.textTheme.titleLarge), Bubble(title: passwordText, style: t.textTheme.titleMedium)],
                 ),
-                IconButton(
-                    onPressed: () => copy(widget.data.password, context),
-                    icon: copyIcon)
+                IconButton(onPressed: () => copy(decodedPassword, context), icon: copyIcon)
               ],
             ),
           ),

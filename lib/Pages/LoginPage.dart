@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:password_manager/Helper/Storage.dart';
 
 import 'HomePage.dart';
 
@@ -28,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future init() async {
+    await Storage.create();
+
     bool hasPass = await SecureStorage.hasMasterPass();
     setState(() {
       isMasterPasswordSet = hasPass;
@@ -39,15 +42,15 @@ class _LoginPageState extends State<LoginPage> {
       if (isMasterPasswordSet == null) return;
 
       if (isMasterPasswordSet == true) {
-        String masterPassword = await SecureStorage.getMasterPass();
-        if (masterPassword != passContr.value.text) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        bool match = await SecureStorage.compareMasterPassword(passContr.value.text);
+        if (!match) {
+          return ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text("Wrong password"),
           ));
-          return;
         }
       } else {
         await SecureStorage.setMasterPass(passContr.value.text);
+        await SecureStorage.saveEncryptPass(generatePassword(32));
       }
 
       navigateTo(context, const HomePage(), clear: true);
@@ -63,8 +66,7 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(isMasterPasswordSet == true ? 'Unlock' : 'Create password',
-                  style: t.textTheme.titleLarge),
+              Text(isMasterPasswordSet == true ? 'Unlock' : 'Create password', style: t.textTheme.titleLarge),
               TextFormField(
                 controller: passContr,
                 textAlign: TextAlign.center,

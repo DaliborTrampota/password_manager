@@ -27,8 +27,7 @@ class _EditFormState extends State<EditForm> {
 
   void validate(context) async {
     if (_formKey.currentState!.validate()) {
-      AccountEntry data =
-          AccountEntry(siteContr.text, usernameContr.text, passwordContr.text);
+      AccountEntry data = AccountEntry(siteContr.text, usernameContr.text, passwordContr.text);
 
       data.password = encryptPass(masterPassword, passwordContr.text);
       Storage.editSite(widget.data.siteName, data);
@@ -70,10 +69,7 @@ class _EditFormState extends State<EditForm> {
               TextFormField(
                 controller: siteContr,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(10),
-                    labelText: 'Site name or URL',
-                    hintText: 'Google',
-                    labelStyle: t.textTheme.labelMedium),
+                    contentPadding: const EdgeInsets.all(10), labelText: 'Site name or URL', hintText: 'Google', labelStyle: t.textTheme.labelMedium),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a site name or URL';
@@ -84,10 +80,7 @@ class _EditFormState extends State<EditForm> {
               TextFormField(
                 controller: usernameContr,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(10),
-                    labelText: 'Username',
-                    hintText: 'Dalibor',
-                    labelStyle: t.textTheme.labelMedium),
+                    contentPadding: const EdgeInsets.all(10), labelText: 'Username', hintText: 'Dalibor', labelStyle: t.textTheme.labelMedium),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
@@ -98,10 +91,7 @@ class _EditFormState extends State<EditForm> {
               TextFormField(
                 controller: passwordContr,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(10),
-                    labelText: 'Password',
-                    hintText: '******',
-                    labelStyle: t.textTheme.labelMedium),
+                    contentPadding: const EdgeInsets.all(10), labelText: 'Password', hintText: '******', labelStyle: t.textTheme.labelMedium),
                 obscureText: true,
                 validator: (value) {
                   return validatePassword(value, pr);

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
-import 'DetailPage.dart';
-import 'CreateForm.dart';
-import 'EditForm.dart';
+import 'package:password_manager/Components/AccountTile.dart';
+import 'package:password_manager/Pages/DetailPage.dart';
 
 import 'package:password_manager/Helper/Types.dart';
 import 'package:password_manager/Helper/Utils.dart';
 import 'package:password_manager/Helper/Storage.dart';
+import 'package:password_manager/Pages/FormPage.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -24,22 +23,16 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    init();
-  }
-
-  Future init() async {
-    await Storage.create();
     final accounts = Storage.getAccounts();
-
     setState(() {
       this.accounts = accounts;
     });
   }
 
-  void removeSite(siteName, context) {
-    Storage.removeSite(siteName);
+  void removeSite(AccountEntry data, context) async {
+    await Storage.removeSite(data.siteName);
     setState(() {
-      accounts = accounts.where((a) => a.siteName != siteName).toList();
+      accounts = Storage.getAccounts();
     });
   }
 
@@ -53,41 +46,7 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    navigateTo(context, EditForm(data: AccountEntry.clone(data)));
-  }
-
-  Widget renderTile(AccountEntry data, BuildContext context) {
-    final ThemeData t = Theme.of(context);
-    return ListTile(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10))),
-        tileColor: t.colorScheme.primary,
-        title: Text(data.siteName,
-            style: t.brightness == Brightness.light
-                ? t.textTheme.titleMedium!.copyWith(color: Colors.grey.shade300)
-                : t.textTheme.titleMedium),
-        onTap: () =>
-            navigateTo(context, DetailPage(data: AccountEntry.clone(data))),
-        subtitle: Text(data.username,
-            style: t.brightness == Brightness.light
-                ? t.textTheme.titleSmall!.copyWith(color: Colors.grey.shade300)
-                : t.textTheme.titleSmall),
-        trailing: Wrap(children: [
-          IconButton(
-            splashRadius: 16,
-            constraints: const BoxConstraints(),
-            padding: const EdgeInsets.all(4),
-            icon: Icon(Icons.delete, color: t.colorScheme.onPrimary),
-            onPressed: () => removeSite(data.siteName, context),
-          ),
-          IconButton(
-            splashRadius: 16,
-            constraints: const BoxConstraints(),
-            padding: const EdgeInsets.all(4),
-            icon: Icon(Icons.edit, color: t.colorScheme.onPrimary),
-            onPressed: () => editSite(data, context),
-          ),
-        ]));
+    navigateTo(context, FormPage(data: data));
   }
 
   @override
@@ -102,12 +61,12 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8.0),
           itemCount: accounts.length,
           itemBuilder: (context, i) {
-            return renderTile(accounts[i], context);
+            return AccountTile(data: accounts[i], onEdit: editSite, onRemove: removeSite);
           },
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => navigateTo(context, const CreateForm()),
+        onPressed: () => navigateTo(context, FormPage()),
         child: const Icon(Icons.add),
       ),
     );

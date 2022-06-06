@@ -21,8 +21,8 @@ class Storage {
 
   Storage._privateConstructor();
 
-  static createEntry(AccountEntry data) {
-    accountBox!.put(data.siteName, data);
+  static Future<void> createEntry(AccountEntry data) async {
+    return await accountBox!.put(data.siteName, data);
   }
 
   static bool siteExists(String name) {
@@ -33,12 +33,12 @@ class Storage {
     return accountBox?.values.toList() ?? [];
   }
 
-  static removeSite(String name) {
-    accountBox!.delete(name);
+  static Future<void> removeSite(String name) async {
+    return await accountBox!.delete(name);
   }
 
   static Future editSite(String name, AccountEntry newData) async {
-    Storage.removeSite(name);
-    Storage.createEntry(newData);
+    await Storage.removeSite(name);
+    await Storage.createEntry(newData);
   }
 }
