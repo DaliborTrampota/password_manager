@@ -36,7 +36,7 @@ class _CreateFormState extends State<CreateForm> {
 
       String masterPassword = await SecureStorage.getMasterPass();
       data.password = encryptPass(masterPassword, data.password);
-      Storage.createEntry(data);
+      Storage.createSite(data);
 
       _formKey.currentState?.reset();
       navigateTo(context, const HomePage(), clear: true);

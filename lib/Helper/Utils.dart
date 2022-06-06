@@ -7,9 +7,16 @@ import 'package:password_manager/Helper/Types.dart';
 
 void navigateTo(context, StatefulWidget page, {clear = false}) {
   if (clear) {
-    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => page), (r) => false);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+      (r) => false,
+    );
   } else {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => page),
+    );
   }
 }
 
@@ -48,7 +55,7 @@ String decryptPass(String encryptPassword, String pass) {
     return decrypted;
   } catch (err) {
     print(err);
-    throw "Wrong Master Password";
+    throw "Wrong encrypt Password";
   }
 }
 

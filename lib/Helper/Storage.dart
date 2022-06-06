@@ -21,7 +21,7 @@ class Storage {
 
   Storage._privateConstructor();
 
-  static Future<void> createEntry(AccountEntry data) async {
+  static Future<void> createSite(AccountEntry data) async {
     return await accountBox!.put(data.siteName, data);
   }
 
@@ -37,8 +37,9 @@ class Storage {
     return await accountBox!.delete(name);
   }
 
-  static Future editSite(String name, AccountEntry newData) async {
+  static Future<void> editSite(String name, AccountEntry newData) async {
     await Storage.removeSite(name);
-    await Storage.createEntry(newData);
+    await Storage.createSite(newData);
+    return;
   }
 }

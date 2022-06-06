@@ -23,9 +23,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    final accounts = Storage.getAccounts();
     setState(() {
-      this.accounts = accounts;
+      accounts = Storage.getAccounts();
     });
   }
 
@@ -40,9 +39,7 @@ class _HomePageState extends State<HomePage> {
     bool authenticated = await authenticate();
 
     if (!authenticated) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Not authenticated"),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Not authenticated")));
       return;
     }
 
@@ -61,7 +58,11 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.all(8.0),
           itemCount: accounts.length,
           itemBuilder: (context, i) {
-            return AccountTile(data: accounts[i], onEdit: editSite, onRemove: removeSite);
+            return AccountTile(
+              data: accounts[i],
+              onEdit: editSite,
+              onRemove: removeSite,
+            );
           },
         ),
       ),

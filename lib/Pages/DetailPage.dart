@@ -38,9 +38,7 @@ class _DetailPageState extends State<DetailPage> {
       await _authenticate();
 
       if (!isAuthenticated) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Not authenticated"),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Not authenticated")));
         return;
       }
 
@@ -49,9 +47,7 @@ class _DetailPageState extends State<DetailPage> {
         decodedPassword = decryptPass(encryptPass, widget.data.password);
       } catch (err) {
         print(err);
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Wrong master password!"),
-        ));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Wrong master password!")));
         return;
       }
     }
@@ -66,13 +62,9 @@ class _DetailPageState extends State<DetailPage> {
     if (isAuthenticated) {
       Clipboard.setData(ClipboardData(text: text));
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Copied into clipboard"),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Copied into clipboard")));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Authenticate first by pressing the eye button"),
-      ));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Authenticate first by pressing the eye button")));
     }
   }
 
@@ -90,7 +82,10 @@ class _DetailPageState extends State<DetailPage> {
           Container(
             margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 5),
             height: 100,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: t.colorScheme.primary),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: t.colorScheme.primary,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -109,14 +104,20 @@ class _DetailPageState extends State<DetailPage> {
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 10),
             height: 100,
-            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: t.colorScheme.primary),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: t.colorScheme.primary,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [Bubble(title: 'Password', style: t.textTheme.titleLarge), Bubble(title: passwordText, style: t.textTheme.titleMedium)],
+                  children: [
+                    Bubble(title: 'Password', style: t.textTheme.titleLarge),
+                    Bubble(title: passwordText, style: t.textTheme.titleMedium),
+                  ],
                 ),
                 IconButton(onPressed: () => copy(decodedPassword, context), icon: copyIcon)
               ],

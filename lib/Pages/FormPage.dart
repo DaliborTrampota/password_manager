@@ -47,7 +47,7 @@ class _FormPageState extends State<FormPage> {
         return;
       }
 
-      await Storage.createEntry(data);
+      await Storage.createSite(data);
     } else if (widget.mode == FormMode.edit) {
       await Storage.editSite(widget.data!.siteName, data);
     }
@@ -92,10 +92,11 @@ class _FormPageState extends State<FormPage> {
               TextFormField(
                 controller: siteContr,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(10),
-                    labelText: 'Site name or URL',
-                    hintText: widget.data != null ? widget.data!.siteName : 'Google',
-                    labelStyle: t.textTheme.labelMedium),
+                  contentPadding: const EdgeInsets.all(10),
+                  labelText: 'Site name or URL',
+                  hintText: widget.data != null ? widget.data!.siteName : 'Google',
+                  labelStyle: t.textTheme.labelMedium,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a site name or URL';
@@ -106,10 +107,11 @@ class _FormPageState extends State<FormPage> {
               TextFormField(
                 controller: usernameContr,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(10),
-                    labelText: 'Username',
-                    hintText: widget.data != null ? widget.data!.username : 'Dalibor',
-                    labelStyle: t.textTheme.labelMedium),
+                  contentPadding: const EdgeInsets.all(10),
+                  labelText: 'Username',
+                  hintText: widget.data != null ? widget.data!.username : 'Dalibor',
+                  labelStyle: t.textTheme.labelMedium,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a username';
@@ -120,10 +122,11 @@ class _FormPageState extends State<FormPage> {
               TextFormField(
                 controller: passwordContr,
                 decoration: InputDecoration(
-                    contentPadding: const EdgeInsets.all(10),
-                    labelText: 'Password',
-                    hintText: decryptedPassword.isNotEmpty ? decryptedPassword : '******',
-                    labelStyle: t.textTheme.labelMedium),
+                  contentPadding: const EdgeInsets.all(10),
+                  labelText: 'Password',
+                  hintText: decryptedPassword.isNotEmpty ? decryptedPassword : '******',
+                  labelStyle: t.textTheme.labelMedium,
+                ),
                 obscureText: widget.mode != FormMode.edit,
                 validator: (value) {
                   return validatePassword(value, pr);
